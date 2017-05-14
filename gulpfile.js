@@ -54,6 +54,7 @@ gulp.task('clean', function (cb) {
 
 gulp.task('copyLibs', function () {
 	return gulp.src([
+		'./node_modules/d3/d3.*{js,css,map}',
 		'./node_modules/angular/**/*.{js,css,map}',
 		'./node_modules/angular-ui-router/release/**/*',
 		'./node_modules/angular-touch/angular-touch.min.js',
