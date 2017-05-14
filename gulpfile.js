@@ -108,11 +108,13 @@ gulp.task('concatJS', function () {
 		'./src/controllers/**/*.*'
 	];
 
+/*
 	if (mode != modes.PRODUCTION) {
 		files.push('!./src/services/Config.js')
 	} else {
 		files.push('!./src/services/Config_dev.js')
 	}
+*/
 
 	return gulp.src(files)
 		.pipe(gulpIf((mode != modes.PRODUCTION), sourceMaps.init()))
