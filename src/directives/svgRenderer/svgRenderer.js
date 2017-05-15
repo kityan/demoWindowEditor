@@ -484,7 +484,7 @@
 
 				// добавим ручку
 				if (config[i].side == sash.properties.handleSide) {
-					beam.append(createSashHandle(config[i], sash));
+					beam.appendChild(createSashHandle(config[i], sash));
 				}
 
 				g.appendChild(beam);
