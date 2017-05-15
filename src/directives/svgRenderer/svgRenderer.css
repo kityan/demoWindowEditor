@@ -1,0 +1,61 @@
+
+	g.aperture path {
+		fill-opacity: 0;
+		stroke-width: 0;
+		stroke: black;
+	}
+	
+	g.aperture--empty path {
+		fill-opacity: 0.03;
+	}
+	
+	g.impost g.beam path,	
+	g.frame g.beam path,
+	g.sash g.beam path {
+		fill-opacity: 1;
+		fill: #EEE;
+		stroke-width: 1px;
+		stroke: #777;
+		/*shape-rendering: crispEdges;*/
+	}
+
+	g.sash--label path {
+		fill: none;
+		stroke-width: 2px;
+		stroke-opacity: 0.3;
+		stroke: darkslateblue;
+	}
+
+
+	g.glass g.bead path {
+		fill-opacity: 1;
+		fill: #EEE;
+		stroke-width: 1px;
+		stroke: #777;
+	}
+
+	g.glass path {
+		fill-opacity: 0.5;		
+		fill: lightskyblue;
+	}
+
+
+	g.handle rect {
+		fill-opacity: 1;	
+		fill: #FFFFF0;
+		stroke: #777;
+		stroke-width: 1;
+	}
+
+	g.hinge rect {
+		fill-opacity: 1;	
+		fill: #FFFFF0;
+		stroke: #777;
+		stroke-width: 1;
+	}
+
+	svg rect._invisible {
+		fill-opacity: 1;	
+		fill: none;
+		stroke: none;
+	}
