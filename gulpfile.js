@@ -69,9 +69,9 @@ gulp.task('copyLibs', function () {
 });
 
 gulp.task('templates', function () {
-	return gulp.src('./src/views/**/*.html')
+	return gulp.src('./src/**/*.tpl.html')
 		.pipe(templateCache({
-			root: 'views/',
+			root: '',
 			standalone: true,
 			filename: 'app-templates.js',
 			module: 'app-templates'
@@ -81,10 +81,11 @@ gulp.task('templates', function () {
 })
 
 // copy files
-gulp.task('copy', ['copyLibs', 'templates'], function () {
+gulp.task('copy', ['copyLibs', 'copyDirectivesAssets', 'templates'], function () {
 	return gulp.src([
 		'./src/**/*.*',
 		'!./src/css/**/*',
+		'!./src/views/**/*',
 		'!./src/*.js',
 		'!./src/controllers/**/*',
 		'!./src/directives/**/*',
@@ -93,6 +94,16 @@ gulp.task('copy', ['copyLibs', 'templates'], function () {
 	])
 		.pipe(gulp.dest('./dist/'));
 });
+
+
+// copy files
+gulp.task('copyDirectivesAssets', function () {
+	return gulp.src([
+		'./src/directives/*/assets/**/*',
+	])
+		.pipe(gulp.dest('./dist/assets/directives/'));
+});
+
 
 // watch changes
 gulp.task('watch', function () {
@@ -104,18 +115,18 @@ gulp.task('concatJS', function () {
 
 	var files = [
 		'./src/initial.js',
-		'./src/services/**/*.*',
-		'./src/directives/**/*.*',
-		'./src/controllers/**/*.*'
+		'./src/services/**/*.js',
+		'./src/directives/**/*.js',
+		'./src/controllers/**/*.js'
 	];
 
-/*
-	if (mode != modes.PRODUCTION) {
-		files.push('!./src/services/Config.js')
-	} else {
-		files.push('!./src/services/Config_dev.js')
-	}
-*/
+	/*
+		if (mode != modes.PRODUCTION) {
+			files.push('!./src/services/Config.js')
+		} else {
+			files.push('!./src/services/Config_dev.js')
+		}
+	*/
 
 	return gulp.src(files)
 		.pipe(gulpIf((mode != modes.PRODUCTION), sourceMaps.init()))
@@ -134,7 +145,7 @@ gulp.task('concatJS', function () {
 gulp.task('concatCSS', function () {
 
 	var files = [
-		'./src/css/**/*'
+		'./src/**/*.{less,css}'
 	];
 
 	return gulp.src(files)
