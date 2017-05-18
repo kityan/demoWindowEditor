@@ -95,7 +95,7 @@
 				},
 
 
-		// 3
+				// 3
 				{
 					name: 'Рама 2000×1500 с импостом со смещением',
 					data: {
@@ -121,6 +121,60 @@
 											},
 											{
 												side: "right",
+											}
+										]
+									}
+								}
+							}
+						}
+					}
+				},
+
+
+				// 3
+				{
+					name: 'Рама 2000×1500 с тремя импостами со смещением',
+					data: {
+						"formatVersion": 1,
+						"aperture": {
+							"size": { "vertical": 1500, "horizontal": 2000 },
+							"content": {
+								"type": "frame",
+								"properties": {
+									"sizes": { "heightFront": 48, "heightRear": 68, "beadHeight": 18 }
+								},
+								"aperture": {
+									"content": {
+										"type": "impost",
+										"properties": {
+											"offsetLeft": -200,
+											"direction": "vertical",
+											"sizes": { "heightFront": 48, "heightRear": 88, "beadHeight": 18 }
+										},
+										aperture: [
+											{
+												side: 'left',
+												"content": {
+													"type": "impost",
+													"properties": {
+														"offsetTop": 200,
+														"direction": "horizontal",
+														"sizes": { "heightFront": 48, "heightRear": 88, "beadHeight": 18 }
+													},
+													aperture: [{ side: "top" }, { side: "bottom" }]
+												}
+											},
+											{
+												side: "right",
+												"content": {
+													"type": "impost",
+													"properties": {
+														"offsetTop": 100,
+														"direction": "horizontal",
+														"sizes": { "heightFront": 48, "heightRear": 88, "beadHeight": 18 },
+													},
+													aperture: [{ side: "top" }, { side: "bottom" }]
+												}
 											}
 										]
 									}
@@ -272,7 +326,157 @@
 							}
 						}
 					}
-				} // 10
+				}, // 10
+
+
+
+				// 11
+				{
+					name: 'Много всего',
+					data: {
+						"formatVersion": 1,
+						"aperture": {
+							"size": { "vertical": 1500, "horizontal": 2000 },
+							"content": {
+								"type": "frame",
+								"properties": {
+									"sizes": { "heightFront": 48, "heightRear": 68, "beadHeight": 18 }
+								},
+								"aperture": {
+									"content": {
+										"type": "impost",
+										"properties": {
+											"offsetLeft": -200,
+											"direction": "vertical",
+											"sizes": { "heightFront": 48, "heightRear": 88, "beadHeight": 18 }
+										},
+										aperture: [
+											{
+												side: 'left',
+												"content": {
+													"type": "impost",
+													"properties": {
+														"offsetTop": 200,
+														"direction": "horizontal",
+														"sizes": { "heightFront": 48, "heightRear": 88, "beadHeight": 18 }
+													},
+													aperture: [{
+														side: "top",
+														content: {
+															"type": "glass",
+															"properties": {
+																"sizes": {}
+															}
+														}
+													}, {
+														side: "bottom",
+														content: {
+															"type": "sash",
+															"properties": {
+																"handleSide": "top",
+																"tilt": false,
+																"sizes": { "labelPadding": 20, "heightFront": 52, "heightRear": 72, "overlap": 8, "beadHeight": 18 }
+															},
+															"aperture": {
+																"content": {
+																	"type": "glass",
+																	"properties": {
+																		"sizes": {}
+																	}
+																}
+															}
+														}
+													}]
+												}
+											},
+											{
+												side: "right",
+												"content": {
+													"type": "impost",
+													"properties": {
+														"offsetTop": -300,
+														"direction": "horizontal",
+														"sizes": { "heightFront": 48, "heightRear": 88, "beadHeight": 18 },
+													},
+													aperture: [{
+														side: "top",
+														content: {
+															"type": "sash",
+															"properties": {
+																"handleSide": "bottom",
+																"tilt": false,
+																"sizes": { "labelPadding": 20, "heightFront": 52, "heightRear": 72, "overlap": 8, "beadHeight": 18 }
+															},
+															"aperture": {
+																"content": {
+																	"type": "glass",
+																	"properties": {
+																		"sizes": {}
+																	}
+																}
+															}
+														}
+													}, {
+														side: "bottom",
+														content: {
+															"type": "sash",
+															"properties": {
+																"handleSide": "right",
+																"tilt": true,
+																"sizes": { "labelPadding": 20, "heightFront": 52, "heightRear": 72, "overlap": 8, "beadHeight": 18 }
+															},
+															"aperture": {
+
+																"content": {
+																	"type": "impost",
+																	"properties": {
+																		"offsetTop": 0,
+																		"direction": "horizontal",
+																		"sizes": { "heightFront": 48, "heightRear": 88, "beadHeight": 18 },
+																	},
+																	aperture: [{
+																		side: "top",
+																		content: {
+																			"type": "sash",
+																			"properties": {
+																				"handleSide": "left",
+																				"tilt": false,
+																				"sizes": { "labelPadding": 20, "heightFront": 52, "heightRear": 72, "overlap": 8, "beadHeight": 18 }
+																			},
+																			"aperture": {
+																				"content": {
+																					"type": "glass",
+																					"properties": {
+																						"sizes": {}
+																					}
+																				}
+																			}
+																		}
+																	}, {
+																		side: "bottom",
+																		"content": {
+																			"type": "glass",
+																			"properties": {
+																				"sizes": {}
+																			}
+																		}
+																	}
+																	]
+																}
+															}
+														}
+													}]
+												}
+											}
+										]
+									}
+								}
+							}
+						}
+					}
+				},
+
+
 
 			]
 
