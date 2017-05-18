@@ -129,38 +129,72 @@
 			var outerAperturePoints = calculateAperturePoints(contentCreatingThisAperture._parent).points;
 			// передняя стенка
 			var hf = contentCreatingThisAperture.properties.sizes.heightFront;
-			// сдвиг оси импоста относительно начала просвета
-			var oL = contentCreatingThisAperture.properties.offsetLeft;
 
 			// если импост, то создал пару просветов:
 			if (contentCreatingThisAperture.type == 'impost') {
-				var left = (aperture.side == 'left');
-				// пока только вертикальный и не учитываем его сдвиг от центра просвета
-				return {
-					points: [
-						{
-							x: 0, y: 0
-						},
-						{
-							x: ((left) ? oL : -oL) + (outerAperturePoints[1].x - hf) / 2, y: 0
-						},
-						{
-							x: ((left) ? oL : -oL) + (outerAperturePoints[2].x - hf) / 2,
-							y: outerAperturePoints[2].y
-						},
-						{
-							x: 0, y: outerAperturePoints[2].y
+
+				if (contentCreatingThisAperture.properties.direction == 'vertical') {
+					// сдвиг оси импоста относительно начала просвета слева
+					var offsetLeft = contentCreatingThisAperture.properties.offsetLeft;
+					var left = (aperture.side == 'left');
+					return {
+						points: [
+							{
+								x: 0, y: 0
+							},
+							{
+								x: ((left) ? offsetLeft : -offsetLeft) + (outerAperturePoints[1].x - hf) / 2, 
+								y: 0
+							},
+							{
+								x: ((left) ? offsetLeft : -offsetLeft) + (outerAperturePoints[2].x - hf) / 2,
+								y: outerAperturePoints[2].y
+							},
+							{
+								x: 0, 
+								y: outerAperturePoints[2].y
+							}
+						],
+						// смещение относительно родительского проёма
+						translation: {
+							x: (left) ? 0 : offsetLeft + ((outerAperturePoints[1].x + hf) / 2),
+							y: 0
 						}
-					],
-					// смещение относительно родительского проёма
-					translation: {
-						x: (left) ? 0 : oL + ((outerAperturePoints[1].x + hf) / 2),
-						y: 0
-					}
-				};
+					};
+				} else { // horizontal
+					// сдвиг оси импоста относительно начала просвета сверху
+					var offsetTop = contentCreatingThisAperture.properties.offsetTop;
+					var top = (aperture.side == 'top');
+					return {
+						points: [
+							{
+								x: 0,
+								y: 0
+							},
+							{
+								x: outerAperturePoints[1].x,
+								y: 0,
+							},
+							{
+								x: outerAperturePoints[1].x,
+								y: ((top) ? offsetTop : -offsetTop) + (outerAperturePoints[2].y - hf) / 2
+							},
+							{
+								x: 0, 
+								y: ((top) ? offsetTop : -offsetTop) + (outerAperturePoints[2].y - hf) / 2
+							}
+						],
+						// смещение относительно родительского проёма
+						translation: {
+							x: 0,
+							y: (top) ? 0 : offsetTop + ((outerAperturePoints[2].y + hf) / 2)
+						}
+					};
+				}
 
 			}
 
+			// не импост
 			return {
 				points: [
 					{ x: 0, y: 0 },
@@ -605,7 +639,7 @@
 
 
 		/**
-		 * 	Рисуем импост пока только вертикальный
+		 * Рисуем импост
 		 * @param {Object} impost
 		 * @param {Object} aperture 
 		 */
@@ -623,38 +657,47 @@
 
 			// временно, вынести в отдельные функции
 			stat.impost.qty++;
-			stat.impost.lengths.push(points[2].y - points[1].y);
+			stat.impost.lengths.push((impost.direction == 'vertical') ? (points[2].y - points[1].y) : (points[1].x - points[0].x));
 
 			var hb = impost.properties.sizes.heightRear;
 			var hf = impost.properties.sizes.heightFront;
-			var oL = impost.properties.offsetLeft;
+			var offsetLeftOrTop = (impost.properties.direction == 'vertical') ? impost.properties.offsetLeft : impost.properties.offsetTop;
 			var cut = (hb - hf) / 2;
 
-			var arr = [
-				{ x: oL + (points[1].x / 2) - hb / 2, y: points[1].y + cut },
-				{ x: oL + (points[1].x / 2) + hb / 2, y: points[1].y + cut },
-				{ x: oL + (points[2].x / 2) + hb / 2, y: points[2].y - cut },
-				{ x: oL + (points[2].x / 2) - hb / 2, y: points[2].y - cut },
-			]
-			var line = [
-				{ x: oL + (points[1].x / 2) - hf / 2, y: points[1].y },
-				{ x: oL + (points[1].x / 2) + hf / 2, y: points[1].y },
-				{ x: oL + (points[2].x / 2) + hf / 2, y: points[2].y },
-				{ x: oL + (points[2].x / 2) - hf / 2, y: points[2].y },
-			]
+
+			if (impost.properties.direction == 'vertical') {
+				var iPoints = function (w, cut, o) {
+					return [
+						{ x: o + (points[1].x / 2) - w / 2, y: points[1].y + cut },
+						{ x: o + (points[1].x / 2) + w / 2, y: points[1].y + cut },
+						{ x: o + (points[1].x / 2) + w / 2, y: points[2].y - cut },
+						{ x: o + (points[1].x / 2) - w / 2, y: points[2].y - cut },
+					]
+				}
+			} else {
+				var iPoints = function (w, cut, o) {
+					return [
+						{ x: points[0].x + cut, y: o + (points[2].y / 2) - w / 2 },
+						{ x: points[0].x + cut, y: o + (points[2].y / 2) + w / 2 },
+						{ x: points[1].x - cut, y: o + (points[2].y / 2) + w / 2 },
+						{ x: points[1].x - cut, y: o + (points[2].y / 2) - w / 2 },
+					]
+				}
+			}
+
 
 
 			d3.select(beam)
 				.classed('beam beam--vertical', true)
 				.append('svg:path')
-				.attr('d', lineFunction(arr) + ' Z')
+				.attr('d', lineFunction(iPoints(hb, cut, offsetLeftOrTop)) + ' Z')
 				.attr('stroke-linejoin', 'round')
 				.attr('vector-effect', 'non-scaling-stroke')
 				;
 
 			d3.select(beam)
 				.append('svg:path')
-				.attr('d', lineFunction(line) + ' Z')
+				.attr('d', lineFunction(iPoints(hf, 0, offsetLeftOrTop)) + ' Z')
 				.attr('stroke-linejoin', 'round')
 				.attr('vector-effect', 'non-scaling-stroke')
 				;
