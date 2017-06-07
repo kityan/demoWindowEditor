@@ -3,15 +3,16 @@
 
 	angular
 		.module('app')
-		.controller('MainController', ['$scope', 'ModelsExamples', Controller]);
+		.controller('MainController', ['$scope', 'CurrentModel', Controller]);
 
-	function Controller($scope, ModelsExamples) {
+	function Controller($scope, CurrentModel) {
 
-		$scope.models = ModelsExamples.models;
-		$scope.selectedModelData = ModelsExamples.models[0].data;
-		$scope.render = function(index){
-			$scope.selectedModelData = ModelsExamples.models[index].data;
-		}
+		$scope.modelData = CurrentModel.modelData;
+		$scope.$watch('stat', function () {
+			if ($scope.stat) {
+				CurrentModel.modelData = $scope.updatedModel;
+			}
+		}, true)
 
 	}
 

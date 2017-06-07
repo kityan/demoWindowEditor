@@ -4,6 +4,12 @@
 	angular
 		.module('app', ['app-templates', 'ui.router', 'ui.bootstrap', 'ui.bootstrap.contextMenu'])
 		.config(['$stateProvider', '$urlRouterProvider', '$sceDelegateProvider', '$uibTooltipProvider', config])
+		.run(['CurrentModel', 'ModelsExamples', run])
+
+
+	function run(CurrentModel, ModelsExamples) {
+		CurrentModel.modelData = ModelsExamples.models[0].data;
+	}
 
 
 	function config($stateProvider, $urlRouterProvider, $sceDelegateProvider, $uibTooltipProvider) {
@@ -23,10 +29,38 @@
 				views: {
 					'nav': {
 						templateUrl: 'views/nav.tpl.html',
-						//controller: 'NavController'
+						controller: 'NavController'
 					},
 					'main': {
 						templateUrl: 'views/main.tpl.html',
+						controller: 'MainController'
+					}
+				}
+			})
+
+			.state('templates', {
+				url: '/templates',
+				views: {
+					'nav': {
+						templateUrl: 'views/nav.tpl.html',
+						controller: 'NavController'
+					},
+					'main': {
+						templateUrl: 'views/templates.tpl.html',
+						controller: 'TemplatesController'
+					}
+				}
+			})
+
+			.state('model', {
+				url: '/model',
+				views: {
+					'nav': {
+						templateUrl: 'views/nav.tpl.html',
+						controller: 'NavController'
+					},
+					'main': {
+						templateUrl: 'views/model.tpl.html',
 						controller: 'MainController'
 					}
 				}

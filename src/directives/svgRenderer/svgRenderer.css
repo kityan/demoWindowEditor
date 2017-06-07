@@ -16,8 +16,11 @@
 		fill: #EEE;
 		stroke-width: 1px;
 		stroke: #777;
-		shape-rendering: crispEdges;
+/*		shape-rendering: crispEdges;*/
 	}
+
+
+
 
 	g.sash--label path {
 		fill: none;
@@ -32,7 +35,7 @@
 		fill: #EEE;
 		stroke-width: 1px;
 		stroke: #777;
-		shape-rendering: crispEdges;
+/*		shape-rendering: crispEdges;*/
 	}
 
 	g.glass path {
@@ -60,3 +63,35 @@
 		fill: none;
 		stroke: none;
 	}
+
+
+svg.thumb g.impost g.beam path,	
+svg.thumb g.frame g.beam path,
+svg.thumb g.sash g.beam path,
+svg.thumb g.glass g.bead path,
+svg.thumb g.handle rect {
+	stroke-width: 0.1;
+}
+
+
+svg.thumb	g.sash--label path {
+		stroke-width: 0.5px;
+}
+
+
+
+/* 
+	post-апертурный контент (в частности лейблы на створках поверх контента створки, не должны реагировать на события мыши
+	не все браузеры поддерживают...
+*/
+	g.content--post {
+		pointer-events: none;
+	}
+
+
+	.dropdown-menu {
+		min-width: 150px;
+	}
+
+
+

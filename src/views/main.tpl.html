@@ -1,35 +1,24 @@
-<p>Пример работы рендерера на различных конструкциях. Интерактивность пока не поддерживается.</p>
+<div class="containter">
 
-<div style="width: 800px; height: 600px;  box-sizing: border-box; float: left; border: 1px solid #888;">
-	<svg-renderer model="selectedModelData" stat="stat"></svg-renderer>
-</div>
+	<div class="col-xs-12">
+		<p class="text-center">Используя контекстное меню сформируйте или отредактируйте конструкцию окна.</p>
+		
+		<div style="width: 800px; height: 600px; margin: 0 auto; border: 1px dashed #EEE;">
+			<svg-renderer model="modelData" stat="stat" model-out="updatedModel"></svg-renderer>
+		</div>
+	</div>
 
-<div style="width: 200px; height: 600px; box-sizing: border-box; padding-right: 5px; padding-left: 5px; float: left; border: 1px solid #888;">
-	<p>Примеры конструкций:</p>
-	<p ng-repeat="m in models">
-		<a href="#" ng-click="render($index)" class="modelExample" ng-class="{selected: selectedModelData == m.data}">{{m.name}}</a>
-	</p>
-	</select>
-</div>
 
-<div ng-if="stat" style="width: 300px; height: 600px; box-sizing: border-box; padding-right: 5px; padding-left: 5px; float: left; border: 1px solid #888;">
-	<p>Калькуляция:</p>
-	<p>Общая длина профиля коробки, мм:</p>
-	{{stat.frame.totalLength}}
-	<p>Общая длина профиля створки, мм:</p>
-	{{stat.sash.totalLength}}
-	<p>Количество створок, шт:</p>
-	{{stat.sash.qty}}
-	<p>Общая длина профиля импоста, мм:</p>
-	{{stat.impost.totalLength}}
-	<p>Количество импостов, шт:</p>
-	{{stat.impost.qty}}
-	<p>Общая длина штапика, мм:</p>
-	{{stat.bead.totalLength}}
-	<p>Общая площадь стеклопакета, мм<sup>2</sup>:</p>
-	{{stat.glass.totalArea}}
-</div>
+	<div class="col-xs-12" ng-if="stat">
 
-<div ng-if="selectedModelData" style="width: 1300px; box-sizing: border-box; padding: 5px; clear: both; border: 1px solid #888;">
-	<pre>{{selectedModelData | json}}</pre>
+		<table class="table" style="max-width: 800px; margin: 0 auto; margin-top: 20px; font-size: 10px;">
+			<tr><td>Общая длина профиля коробки, мм</td><td style="width: 50%">{{stat.frame.totalLength}}</td></tr>
+			<tr><td>Общая длина профиля створки, мм</td><td>{{stat.sash.totalLength}}</td></tr>
+			<tr><td>Количество створок, шт</td><td>{{stat.sash.qty}}</td></tr>
+			<tr><td>Общая длина профиля импоста, мм</td><td>{{stat.impost.totalLength}}</td></tr>
+			<tr><td>Количество импостов, шт:</td><td>{{stat.impost.qty}}</td></tr>
+			<tr><td>Общая длина штапика, мм</td><td>{{stat.bead.totalLength}}</td></tr>
+			<tr><td>Общая площадь стеклопакета, мм<sup>2</sup></td><td>{{stat.glass.totalArea}}</td></tr>
+	</div>
+
 </div>

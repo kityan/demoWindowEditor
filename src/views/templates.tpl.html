@@ -1,0 +1,10 @@
+<div class="containter">
+	<div class="col-xs-12">
+		<div ng-repeat="model in models" style="float: left; width: 200px; margin: 20px; height: 200px; box-sizing: border-box;">
+			<p style="font-size: 10px; height: 30px;">{{model.name}}</p>
+			<div style="width: 200px; height: 150px; cursor: pointer;" ng-click="startEditingFromThisTemplate(model.data)">
+				<svg-renderer model="model.data" stat="stat" thumb="true"></svg-renderer>
+			</div>
+		</div>
+	</div>
+</div>

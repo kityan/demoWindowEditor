@@ -1,8 +1,9 @@
 (function () {
 	'use strict';
 
+
 	angular.module('app')
-		.directive('svgRenderer', svgRenderer);
+		.directive('svgRenderer', [svgRenderer]);
 
 	function svgRenderer() {
 		return {
@@ -10,44 +11,65 @@
 			templateUrl: 'directives/svgRenderer/svgRenderer.tpl.html',
 			replace: true,
 			scope: {
-				model: '<',
+				model: '=',
 				stat: '=',
+				modelOut: '=?',
+				thumb: '<?'
 			},
 
-			link: function (scope, elem, attrs) {
+			controller: ['$scope', '$compile', '$element', 'ContextMenu', function ($scope, $compile, $element, ContextMenu) {
 
-				scope.$watch('model', function () {
-					if (scope.model) {
-						scope.stat = draw(angular.copy(scope.model), elem);
+
+				var model;
+
+				if ($scope.thumb) {
+					$element.addClass('thumb');
+				}
+
+				$scope.$watch('model', function () {
+					if ($scope.model) {
+						model = angular.copy($scope.model);
+						$scope.menuOptions = ContextMenu.get(model, renderModel);
+						renderModel();
 					}
 				});
 
-			}
+				function renderModel() {
+					$scope.stat = draw(model, $element, !$scope.thumb);
+					$scope.modelOut = exportModel(model);
+					if (!$scope.thumb) {
+						$compile($element.contents())($scope);
+					}
+				}
+
+
+
+			}]
 		}
 	}
 
 
 
-	function draw(model, element) {
+	function draw(model, element, drawEmptyPattern) {
 
 		// объект статистики
 		var stat = getEmptyStatObject();
 
 		prepareModelTree(model)
+		//console.log(model);
 
 		var lineFunction = d3.svg.line()
 			.x(function (d) { return d.x; })
 			.y(function (d) { return d.y; })
 			.interpolate("linear");
 
-		var view = document.getElementById('svg');
-		var w = svg.clientWidth || svg.parentNode.clientWidth; // 2nd - for firefox
-		var h = svg.clientHeight || svg.parentNode.clientHeight; // 2nd - for firefox
+		var w = element[0].clientWidth || element[0].parentNode.clientWidth; // 2nd - for firefox
+		var h = element[0].clientHeight || element[0].parentNode.clientHeight; // 2nd - for firefox
 
-		var max = d3.max([model.aperture.size.horizontal, model.aperture.size.vertical]);
+		var max = d3.max([model.aperture.properties.size.horizontal, model.aperture.properties.size.vertical]);
 		var scale = 1;
 
-		// пока без привязки к размеру самого view, потому как она пока не резиновый
+		// пока без привязки к размеру самого svg, потому как она пока не резиновый
 		var levels = [
 			{ max: 500, scale: 0.7 },
 			{ max: 800, scale: 0.5 },
@@ -60,11 +82,16 @@
 
 		levels.forEach(function (level) { scale = (max > level.max) ? level.scale : scale; });
 
-		// обратаное масштабирование текстуры пустого проёма
-		d3.select('#img1').attr('width', 20 / scale).attr('height', 20 / scale);
-		d3.select('#img1 image').attr('width', 20 / scale).attr('height', 20 / scale);
+		// жёсткая привязка для демо с перечнем шаблонов
+		if (w <= 200) {
+			scale = scale / 4;
+		}
 
-		var view = document.getElementById('view');
+		// обратаное масштабирование текстуры пустого проёма
+		d3.select(element[0]).selectAll('.svgPatternImg').attr('width', 20 / scale).attr('height', 20 / scale);
+		d3.select(element[0]).selectAll('.svgPatternImg image').attr('width', 20 / scale).attr('height', 20 / scale);
+
+		var view = getFirstClassed(element.find('g'), 'view');
 
 		// empty
 		while (view.firstChild) {
@@ -75,14 +102,14 @@
 		d3.select(view)
 			.attr("transform", function () {
 				return "translate(" +
-					Math.round((w / 2 - model.aperture.size.horizontal * scale / 2))
+					Math.round((w / 2 - model.aperture.properties.size.horizontal * scale / 2))
 					+ "," +
-					Math.round((h / 2 - model.aperture.size.vertical * scale / 2)) + ") scale(" + scale + ")";
+					Math.round((h / 2 - model.aperture.properties.size.vertical * scale / 2)) + ") scale(" + scale + ")";
 			});
 
 
-		function render(placeholder, aperture) {
-			var a = createAperture(aperture);
+		function render(placeholder, aperture, drawEmptyPattern) {
+			var a = createAperture(aperture, drawEmptyPattern);
 			placeholder.appendChild(a);
 			if (aperture.content) {
 				var c = createContent(aperture.content, aperture);
@@ -104,7 +131,7 @@
 		}
 
 
-		render(view, model.aperture);
+		render(view, model.aperture, drawEmptyPattern);
 
 
 		// временно, на самом деле стоит считать их при создании/редактировании контента
@@ -116,9 +143,9 @@
 					translation: { x: 0, y: 0 },
 					points: [
 						{ x: 0, y: 0 },
-						{ x: aperture.size.horizontal, y: 0 },
-						{ x: aperture.size.horizontal, y: aperture.size.vertical },
-						{ x: 0, y: aperture.size.vertical }
+						{ x: aperture.properties.size.horizontal, y: 0 },
+						{ x: aperture.properties.size.horizontal, y: aperture.properties.size.vertical },
+						{ x: 0, y: aperture.properties.size.vertical }
 					]
 				}
 			}
@@ -135,7 +162,7 @@
 
 				if (contentCreatingThisAperture.properties.direction == 'vertical') {
 					// сдвиг оси импоста относительно начала просвета слева
-					var offsetLeft = contentCreatingThisAperture.properties.offsetLeft;
+					var offset = contentCreatingThisAperture.properties.offset;
 					var left = (aperture.side == 'left');
 					return {
 						points: [
@@ -143,27 +170,27 @@
 								x: 0, y: 0
 							},
 							{
-								x: ((left) ? offsetLeft : -offsetLeft) + (outerAperturePoints[1].x - hf) / 2, 
+								x: ((left) ? offset : -offset) + (outerAperturePoints[1].x - hf) / 2,
 								y: 0
 							},
 							{
-								x: ((left) ? offsetLeft : -offsetLeft) + (outerAperturePoints[2].x - hf) / 2,
+								x: ((left) ? offset : -offset) + (outerAperturePoints[2].x - hf) / 2,
 								y: outerAperturePoints[2].y
 							},
 							{
-								x: 0, 
+								x: 0,
 								y: outerAperturePoints[2].y
 							}
 						],
 						// смещение относительно родительского проёма
 						translation: {
-							x: (left) ? 0 : offsetLeft + ((outerAperturePoints[1].x + hf) / 2),
+							x: (left) ? 0 : offset + ((outerAperturePoints[1].x + hf) / 2),
 							y: 0
 						}
 					};
 				} else { // horizontal
 					// сдвиг оси импоста относительно начала просвета сверху
-					var offsetTop = contentCreatingThisAperture.properties.offsetTop;
+					var offset = contentCreatingThisAperture.properties.offset;
 					var top = (aperture.side == 'top');
 					return {
 						points: [
@@ -177,17 +204,17 @@
 							},
 							{
 								x: outerAperturePoints[1].x,
-								y: ((top) ? offsetTop : -offsetTop) + (outerAperturePoints[2].y - hf) / 2
+								y: ((top) ? offset : -offset) + (outerAperturePoints[2].y - hf) / 2
 							},
 							{
-								x: 0, 
-								y: ((top) ? offsetTop : -offsetTop) + (outerAperturePoints[2].y - hf) / 2
+								x: 0,
+								y: ((top) ? offset : -offset) + (outerAperturePoints[2].y - hf) / 2
 							}
 						],
 						// смещение относительно родительского проёма
 						translation: {
 							x: 0,
-							y: (top) ? 0 : offsetTop + ((outerAperturePoints[2].y + hf) / 2)
+							y: (top) ? 0 : offset + ((outerAperturePoints[2].y + hf) / 2)
 						}
 					};
 				}
@@ -211,7 +238,7 @@
 
 
 		// формируем группу и обводку просвета 
-		function createAperture(aperture) {
+		function createAperture(aperture, drawEmptyPattern) {
 			var res = calculateAperturePoints(aperture);
 			var points = res.points;
 			var translation = res.translation;
@@ -221,21 +248,38 @@
 				.attr('transform', 'translate(' + translation.x + ',' + translation.y + ')')
 				.classed('aperture', true)
 				.classed('aperture--empty', !aperture.content)
-				.attr('fill', 'url(#img1)')
+
 				.append('svg:path')
 				.attr('d', lineFunction(points) + ' z')
+				.attr('context-menu', 'menuOptions(' + aperture._ref + ')') // context-menu
+				.attr('model', aperture._ref) // id указателя на узел дерева модели для context-menu
 				;
+
+			if (drawEmptyPattern) {
+				d3.select(g).attr('fill', 'url(#img1)');
+			}
+
+
 			return g;
 		}
 
 		// рисуем контент просвета
 		function createContent(content, aperture) {
+			var g;
 			switch (content.type) {
-				case 'frame': return createFrame(content, aperture);
-				case 'glass': return createGlass(content, aperture);
-				case 'sash': return createSash(content, aperture);
-				case 'impost': return createImpost(content, aperture);
+				case 'frame': g = createFrame(content, aperture); break;
+				case 'glass': g = createGlass(content, aperture); break;
+				case 'sash': g = createSash(content, aperture); break;
+				case 'impost': g = createImpost(content, aperture); break;
 			}
+			d3.select(g.pre)
+				.classed('content--pre', true) // устанавливаем класс для pre-апертурного контента
+				.attr('context-menu', 'menuOptions(' + content._ref + ')') // context-menu
+				.attr('model', content._ref) // id указателя на узел дерева модели для context-menu
+				;
+			d3.select(g.post)
+				.classed('content--post', true); // устанавливаем класс для post-апертурного контента
+			return g;
 		}
 
 
@@ -548,7 +592,7 @@
 			var minX = d3.min(lineArr, function (d) { return d.x; });
 			var maxX = d3.max(lineArr, function (d) { return d.x; });
 			var elName = (beamConfig.side == 'bottom' || beamConfig.side == 'top') ? 'handleHorizontal' : 'handleVertical';
-			var handleBBox = document.getElementById(elName).getBBox();
+			var handleBBox = getFirstClassed(element.find('g'), elName).getBBox();
 			var x = (maxX - minX - handleBBox.width) / 2;
 			var y = (maxY - minY - handleBBox.height) / 2;
 
@@ -556,7 +600,7 @@
 
 			d3.select(handle)
 				.append('svg:use')
-				.attr('xlink:href', '#' + elName)
+				.attr('xlink:href', '#' + elName + '')
 				.attr('x', x - sash.properties.sizes.overlap)
 				.attr('y', y - sash.properties.sizes.overlap)
 				;
@@ -661,7 +705,7 @@
 
 			var hb = impost.properties.sizes.heightRear;
 			var hf = impost.properties.sizes.heightFront;
-			var offsetLeftOrTop = (impost.properties.direction == 'vertical') ? impost.properties.offsetLeft : impost.properties.offsetTop;
+			var offset = impost.properties.offset;
 			var cut = (hb - hf) / 2;
 
 
@@ -690,14 +734,14 @@
 			d3.select(beam)
 				.classed('beam beam--vertical', true)
 				.append('svg:path')
-				.attr('d', lineFunction(iPoints(hb, cut, offsetLeftOrTop)) + ' Z')
+				.attr('d', lineFunction(iPoints(hb, cut, offset)) + ' Z')
 				.attr('stroke-linejoin', 'round')
 				.attr('vector-effect', 'non-scaling-stroke')
 				;
 
 			d3.select(beam)
 				.append('svg:path')
-				.attr('d', lineFunction(iPoints(hf, 0, offsetLeftOrTop)) + ' Z')
+				.attr('d', lineFunction(iPoints(hf, 0, offset)) + ' Z')
 				.attr('stroke-linejoin', 'round')
 				.attr('vector-effect', 'non-scaling-stroke')
 				;
@@ -711,28 +755,65 @@
 		}
 
 
-		// Функция обработки дерева модели. Добавляем _parent
+		/**
+		 * Функция обработки дерева модели. 
+		 * 1) Добавляем _parent
+		 * 2) Добавляем _ref и пополняем ссылками _refs
+		 * @param {Object} tree Дерево модели
+		 */
 		function prepareModelTree(tree) {
 
-			function setParent(node, parentNode) {
+			/**
+			 * 
+			 * @param {Object} node 
+			 * @param {Object} parentNode 
+			 */
+			function setParent(tree, node, parentNode) {
 				if (!node) { return; }
 				node._parent = parentNode;
+				setRef(tree, node);
+				setApertureProps(node);
 				for (var k in node) {
 					if (k == 'content' || k == 'aperture') {
 						if (k == 'aperture' && Array.isArray(node[k])) {
-							node[k].forEach(function (n) { setParent(n, node); })
+							node[k].forEach(function (n) {
+								setParent(tree, n, node);
+							});
+						} else {
+							setParent(tree, node[k], node);
 						}
-						setParent(node[k], node);
 					}
 				}
 			}
 
-			tree.aperture._parent = null;
-			for (var k in tree.aperture) {
-				if (k == 'content' || k == 'aperture') {
-					setParent(tree.aperture[k], tree.aperture);
+			/**
+			 * Добавляем для просветов type:aperture и isRootAperture:true для упрощения остального кода
+			 */
+			function setApertureProps(node) {
+				if (node._parent == null) {
+					node.type = 'aperture';
+					node.isRootAperture = true;
+				} else if (!node._parent.content) {
+					node.type = 'aperture';
 				}
 			}
+
+			/**
+			 * 
+			 * @param {Object} tree 
+			 * @param {Object} node 
+			 */
+			function setRef(tree, node) {
+				node._ref = tree._refs.length;
+				tree._refs.push(node);
+			}
+
+			// поместим сюда ссылки на объекты дерева конструкции, а индексы массива будем помещать в _ref соответствующих элементов
+			// будем использовать для того, чтобы через SVG-дерево передавать указатели на ветки дерева модели
+			tree._refs = [];
+
+			// у "корневого"" просвета нет родителя, далее – рекурсивно
+			setParent(tree, tree.aperture, null)
 
 		}
 
@@ -773,6 +854,27 @@
 		stat.glass.totalArea = stat.glass.rects.reduce(function (total, rect) { return total + rect.width * rect.height; }, 0)
 		return stat;
 
+	}
+
+	// вернём первый элемент с классом className
+	function getFirstClassed(arr, className) {
+		for (var i = 0; i < arr.length; i++) {
+			var classAttribute;
+			if (classAttribute = arr[i].getAttribute('class')) {
+				if (classAttribute.split(' ').indexOf(className) >= 0) {
+					return arr[i];
+				}
+			}
+		}
+		return null;
+	}
+
+	function exportModel(obj) {
+		return JSON.parse(JSON.stringify(obj, function (key, value) {
+			if (key == '_parent' || key == '_ref' || key == '_refs' || key == 'isRootAperture') { return undefined; }
+			else if (key == 'type' && value == 'aperture') { return undefined; }
+			else { return value; }
+		}));
 	}
 
 

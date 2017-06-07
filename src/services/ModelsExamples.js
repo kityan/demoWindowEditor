@@ -14,7 +14,7 @@
 					data: {
 						"formatVersion": 1,
 						"aperture": {
-							"size": { "vertical": 1000, "horizontal": 1900 },
+							properties: { "size": { "vertical": 1000, "horizontal": 1900 } },
 							"content": null
 						}
 					}
@@ -26,7 +26,7 @@
 					data: {
 						"formatVersion": 1,
 						"aperture": {
-							"size": { "vertical": 1000, "horizontal": 1000 },
+							properties: { "size": { "vertical": 1000, "horizontal": 1000 } },
 							"content": {
 								"type": "frame",
 								"properties": {
@@ -45,7 +45,7 @@
 					data: {
 						"formatVersion": 1,
 						"aperture": {
-							"size": { "vertical": 1000, "horizontal": 1000 },
+							properties: { "size": { "vertical": 1000, "horizontal": 1000 } },
 							"content": {
 								"type": "frame",
 								"properties": {
@@ -68,7 +68,7 @@
 					data: {
 						"formatVersion": 1,
 						"aperture": {
-							"size": { "vertical": 1000, "horizontal": 1000 },
+							properties: { "size": { "vertical": 1000, "horizontal": 1000 } },
 							"content": {
 								"type": "frame",
 								"properties": {
@@ -101,7 +101,7 @@
 					data: {
 						"formatVersion": 1,
 						"aperture": {
-							"size": { "vertical": 1500, "horizontal": 2000 },
+							properties: { "size": { "vertical": 1500, "horizontal": 2000 } },
 							"content": {
 								"type": "frame",
 								"properties": {
@@ -111,7 +111,7 @@
 									"content": {
 										"type": "impost",
 										"properties": {
-											"offsetLeft": -200,
+											"offset": -200,
 											"direction": "vertical",
 											"sizes": { "heightFront": 48, "heightRear": 88, "beadHeight": 18 }
 										},
@@ -137,7 +137,7 @@
 					data: {
 						"formatVersion": 1,
 						"aperture": {
-							"size": { "vertical": 1500, "horizontal": 2000 },
+							properties: { "size": { "vertical": 1500, "horizontal": 2000 } },
 							"content": {
 								"type": "frame",
 								"properties": {
@@ -147,7 +147,7 @@
 									"content": {
 										"type": "impost",
 										"properties": {
-											"offsetLeft": -200,
+											"offset": -200,
 											"direction": "vertical",
 											"sizes": { "heightFront": 48, "heightRear": 88, "beadHeight": 18 }
 										},
@@ -157,7 +157,7 @@
 												"content": {
 													"type": "impost",
 													"properties": {
-														"offsetTop": 200,
+														"offset": 200,
 														"direction": "horizontal",
 														"sizes": { "heightFront": 48, "heightRear": 88, "beadHeight": 18 }
 													},
@@ -169,7 +169,7 @@
 												"content": {
 													"type": "impost",
 													"properties": {
-														"offsetTop": 100,
+														"offset": 100,
 														"direction": "horizontal",
 														"sizes": { "heightFront": 48, "heightRear": 88, "beadHeight": 18 },
 													},
@@ -191,7 +191,7 @@
 					data: {
 						"formatVersion": 1,
 						"aperture": {
-							"size": { "vertical": 1500, "horizontal": 2000 },
+							properties: { "size": { "vertical": 1500, "horizontal": 2000 } },
 							"content": {
 								"type": "frame",
 								"properties": {
@@ -201,7 +201,7 @@
 									"content": {
 										"type": "impost",
 										"properties": {
-											"offsetLeft": 0,
+											"offset": 0,
 											"direction": "vertical",
 											"sizes": { "heightFront": 48, "heightRear": 88, "beadHeight": 18 }
 										},
@@ -246,7 +246,7 @@
 					data: {
 						"formatVersion": 1,
 						"aperture": {
-							"size": { "vertical": 1600, "horizontal": 2800 },
+							properties: { "size": { "vertical": 1600, "horizontal": 2800 } },
 							"content": {
 								"type": "frame",
 								"properties": {
@@ -256,7 +256,7 @@
 									"content": {
 										"type": "impost",
 										"properties": {
-											"offsetLeft": -100,
+											"offset": -100,
 											"direction": "vertical",
 											"sizes": { "heightFront": 48, "heightRear": 88, "beadHeight": 18 }
 										},
@@ -266,7 +266,7 @@
 												content: {
 													"type": "impost",
 													"properties": {
-														"offsetLeft": 0,
+														"offset": 0,
 														"direction": "vertical",
 														"sizes": { "heightFront": 48, "heightRear": 88, "beadHeight": 18 }
 													},
@@ -336,7 +336,7 @@
 					data: {
 						"formatVersion": 1,
 						"aperture": {
-							"size": { "vertical": 1500, "horizontal": 2000 },
+							properties: { "size": { "vertical": 1500, "horizontal": 2000 } },
 							"content": {
 								"type": "frame",
 								"properties": {
@@ -346,7 +346,7 @@
 									"content": {
 										"type": "impost",
 										"properties": {
-											"offsetLeft": -200,
+											"offset": -200,
 											"direction": "vertical",
 											"sizes": { "heightFront": 48, "heightRear": 88, "beadHeight": 18 }
 										},
@@ -356,7 +356,7 @@
 												"content": {
 													"type": "impost",
 													"properties": {
-														"offsetTop": 200,
+														"offset": 200,
 														"direction": "horizontal",
 														"sizes": { "heightFront": 48, "heightRear": 88, "beadHeight": 18 }
 													},
@@ -394,7 +394,7 @@
 												"content": {
 													"type": "impost",
 													"properties": {
-														"offsetTop": -300,
+														"offset": -300,
 														"direction": "horizontal",
 														"sizes": { "heightFront": 48, "heightRear": 88, "beadHeight": 18 },
 													},
@@ -430,7 +430,7 @@
 																"content": {
 																	"type": "impost",
 																	"properties": {
-																		"offsetTop": 0,
+																		"offset": 0,
 																		"direction": "horizontal",
 																		"sizes": { "heightFront": 48, "heightRear": 88, "beadHeight": 18 },
 																	},
